@@ -9,7 +9,7 @@ class ViewController: UIViewController {
     
     var timer = Timer()
     var totalTime = Int()
-    var lifeCount = 6 // 一局有 6 條命
+    var lifeCount = 6 // 一局可以猜六次
     
     // 提示數字區間
     @IBOutlet weak var min: UILabel!
@@ -31,18 +31,17 @@ class ViewController: UIViewController {
     @IBOutlet weak var answer: UITextField!
         
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     
         timer.invalidate() // 停止計時
-        Input.text = ""
+        Input.text = "" // 清除 UI Text Field 的文字
         hiddenAnswer() // 執行 亂數產生一組 答案數字
-        timer = Timer()
-        totalTime = Int()
+        timer = Timer() // 讓計時器回歸
+        totalTime = Int() // 讓計時器回歸
         timerStart() // 計時開始
-        lifeLabel.text = "\(lifeCount)"
+        lifeLabel.text = "\(lifeCount)" // 顯示可以猜的次數
         
         
     }
@@ -56,10 +55,9 @@ class ViewController: UIViewController {
     func hiddenAnswer() {
         let number = Int.random(in: 1...99) // 在 0 到 99 的區間中，產生一個亂數
         answer.text = "\(number)" // 暫時將答案顯示出來
-        lifeCount = 6 // 重新計算一局有 6 條命
+        lifeCount = 6 // 重新設定一局有 6 條命
         min.text = "1"
         max.text = "99"
-        
         
         }
     
@@ -68,18 +66,18 @@ class ViewController: UIViewController {
         if number == Int(answer.text!) {
             hint.text = String("答對了")
             timer.invalidate() // 停止計時
-            gameOver()
+            gameOver() // 呼叫 遊戲結束 的視窗
             
         } else if number >= Int(answer.text!)! {
-            hint.text = String("你太大了喔")
+            hint.text = String("太大了喔")
             Input.text = "" // UI Text Field 清空
             if number >= Int(max.text!)! {
                 max.text = max.text
             } else {
                 max.text = "\(number)"
             }
-            lifeCount -= 1
-            lifeLabel.text = "\(lifeCount)"
+            lifeCount -= 1 // 可猜次數減一
+            lifeLabel.text = "\(lifeCount)" // 顯示剩餘可猜次數
             
         } else if number <= Int(answer.text!)! {
             hint.text = String("太小了…")
@@ -90,8 +88,8 @@ class ViewController: UIViewController {
                 min.text = "\(number)"
             }
             
-            lifeCount -= 1
-            lifeLabel.text = "\(lifeCount)"
+            lifeCount -= 1 // 可猜次數減一
+            lifeLabel.text = "\(lifeCount)" // 顯示可猜次數
             
         }
         
@@ -100,7 +98,7 @@ class ViewController: UIViewController {
     @IBAction func inputGuess(_ sender: UITextField) {
         
         if lifeCount - 1 == 0, Input.text != nil {
-            lifeLabel.text = "\(lifeCount)"
+            lifeLabel.text = "\(lifeCount - 1)"
             gameOver()
             
             
@@ -115,15 +113,19 @@ class ViewController: UIViewController {
     
     func gameOver() {
         timer.invalidate() // 停止計時
-        let gameOverAlert = UIAlertController(title: "Game Over", message: "正確答案是 \(String(answer.text!))", preferredStyle: .alert) // 設定遊戲結束的警告視窗，並顯示答案
         
+        // 設定遊戲結束的警告視窗，並顯示答案
+        let gameOverAlert = UIAlertController(title: "Game Over", message: "正確答案是 \(String(answer.text!))", preferredStyle: .alert)
+        
+        // 設定 再來一局 的功能
         let replay = UIAlertAction(title: "再來一局", style: .default, handler: {(action:UIAlertAction) -> () in
             self.timer.invalidate() // 停止計時
-            self.viewDidLoad()
+            self.viewDidLoad() // 呼叫 viewDidLoad
             
             })
         
-        gameOverAlert.addAction(replay) //將 replay 加入進 Alert 中
+        //將 replay 加入進 Alert 中
+        gameOverAlert.addAction(replay)
         self.present(gameOverAlert, animated: true, completion: nil)
         
     }
